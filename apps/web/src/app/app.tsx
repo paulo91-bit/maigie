@@ -24,7 +24,25 @@ import { AboutPage } from '../pages/AboutPage';
 import { ContactPage } from '../pages/ContactPage';
 import { PrivacyPage } from '../pages/PrivacyPage';
 import { TermsPage } from '../pages/TermsPage';
+import { AuthRedirectPage } from '../pages/AuthRedirectPage';
 import { CookieNotice } from '../components/layout/CookieNotice';
+import { SignupPage } from '../features/auth/pages/SignupPage';
+import { LoginPage } from '../features/auth/pages/LoginPage';
+import { OTPVerificationPage } from '../features/auth/pages/OTPVerificationPage';
+import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage';
+import { ResetPasswordPage } from '../features/auth/pages/ResetPasswordPage';
+import { OAuthCallbackPage } from '../features/auth/pages/OAuthCallbackPage';
+import { DashboardPage } from '../pages/DashboardPage';
+import { SettingsPage } from '../pages/SettingsPage';
+import { SubscriptionSuccessPage } from '../pages/SubscriptionSuccessPage';
+import { SubscriptionCancelPage } from '../pages/SubscriptionCancelPage';
+import { CourseListPage } from '../features/courses/pages/CourseListPage';
+import { CourseDetailPage } from '../features/courses/pages/CourseDetailPage';
+import { CourseCreatePage } from '../features/courses/pages/CourseCreatePage';
+import { TopicPage } from '../features/courses/pages/TopicPage';
+import { DashboardLayout } from '../components/layout/DashboardLayout';
+import { RedirectIfAuthenticated } from '../components/auth/RedirectIfAuthenticated';
+import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import '../styles.css';
 
 export function App() {
@@ -37,6 +55,28 @@ export function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
+        {/* Auth routes - redirect if already authenticated */}
+        <Route path="/signup" element={<RedirectIfAuthenticated><SignupPage /></RedirectIfAuthenticated>} />
+        <Route path="/login" element={<RedirectIfAuthenticated><LoginPage /></RedirectIfAuthenticated>} />
+        <Route path="/auth/oauth/callback" element={<OAuthCallbackPage />} />
+        <Route path="/verify-otp" element={<RedirectIfAuthenticated><OTPVerificationPage /></RedirectIfAuthenticated>} />
+        <Route path="/forgot-password" element={<RedirectIfAuthenticated><ForgotPasswordPage /></RedirectIfAuthenticated>} />
+        <Route path="/reset-password" element={<RedirectIfAuthenticated><ResetPasswordPage /></RedirectIfAuthenticated>} />
+        
+        {/* Protected routes */}
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout><DashboardPage /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute><DashboardLayout><SettingsPage /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/subscription" element={<ProtectedRoute><DashboardLayout><SettingsPage /></DashboardLayout></ProtectedRoute>} /> {/* Legacy route redirect */}
+        <Route path="/subscription/success" element={<ProtectedRoute><DashboardLayout><SubscriptionSuccessPage /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/subscription/cancel" element={<ProtectedRoute><DashboardLayout><SubscriptionCancelPage /></DashboardLayout></ProtectedRoute>} />
+
+        {/* Course Routes */}
+        <Route path="/courses" element={<ProtectedRoute><DashboardLayout><CourseListPage /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/courses/new" element={<ProtectedRoute><DashboardLayout><CourseCreatePage /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/courses/:id" element={<ProtectedRoute><DashboardLayout><CourseDetailPage /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/courses/:courseId/modules/:moduleId/topics/:topicId" element={<ProtectedRoute><DashboardLayout><TopicPage /></DashboardLayout></ProtectedRoute>} />
+        
+        <Route path="/auth/mobile/callback" element={<AuthRedirectPage />} />
       </Routes>
       <CookieNotice />
     </Router>

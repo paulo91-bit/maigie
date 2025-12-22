@@ -5,10 +5,14 @@ on:
     branches:
       - main
       - development
+    paths:
+      - 'apps/web/**'
   pull_request:
     branches:
       - main
       - development
+    paths:
+      - 'apps/web/**'
 
 jobs:
   deploy:
@@ -27,9 +31,14 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: |
+          # Try npm ci first for faster, deterministic installs
+          # If lock file is out of sync, fall back to npm install
+          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
 
       - name: Build with Nx
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
         run: npx nx build web
 
       - name: Determine project name
@@ -63,4 +72,6 @@ jobs:
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           # For PRs, this creates preview deployments
           # For pushes, this deploys to the branch
+          # Environment variables for runtime (if needed)
+          # Note: Build-time env vars are set in the build step above
 
